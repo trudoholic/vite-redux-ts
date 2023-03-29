@@ -14,17 +14,39 @@ function App() {
     if (initApp) return
     initApp = true
 
-    function* getNumber(): Iterator<number> {
-      yield 1;
-      yield 2;
-      yield 3;
-    }
-    const probablyIterator = getNumber()
-    console.log(probablyIterator.next())
-    console.log(probablyIterator.next())
-    console.log(probablyIterator.next())
-    console.log(probablyIterator.next())
+    // function* getNumber(): Iterator<number> {
+    //   yield 1;
+    //   yield 2;
+    //   yield 3;
+    // }
 
+    function* getNumber(max: number): Iterator<number> {
+      let n = 0
+      while (n < max) {
+        yield n++
+      }
+    }
+
+    const probablyIterator = getNumber(10)
+    // console.log(probablyIterator.next())
+    // console.log(probablyIterator.next())
+    // console.log(probablyIterator.next())
+    // console.log(probablyIterator.next())
+
+    let next
+    while (!(next = probablyIterator.next()).done) {
+      console.log(next.value)
+    }
+
+    // const iterable = {
+    //   *[Symbol.iterator]() {
+    //     yield 1;
+    //   },
+    // };
+    // for (const value of iterable) {
+    //   console.log(value);
+    // }
+    
   }, [])
 
   return (
