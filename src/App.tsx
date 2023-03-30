@@ -2,52 +2,27 @@ import './App.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { decrement, increment } from './counterSlice';
 import { RootState } from './store';
-import {useEffect} from "react";
+import {
+  selectAllCards,
+  cardsAddOne,
+  // cardsAddMany,
+  cardUpdate,
+  cardRemove,
+} from './cardsSlice';
 
-let initApp = false
+let cnt = 0
 
 function App() {
   const count = useSelector((state: RootState) => state.counter.value)
   const dispatch = useDispatch()
 
-  useEffect(() => {
-    if (initApp) return
-    initApp = true
-
-    // function* getNumber(): Iterator<number> {
-    //   yield 1;
-    //   yield 2;
-    //   yield 3;
-    // }
-
-    function* getNumber(max: number): Iterator<number> {
-      let n = 0
-      while (n < max) {
-        yield n++
-      }
-    }
-
-    const probablyIterator = getNumber(10)
-    // console.log(probablyIterator.next())
-    // console.log(probablyIterator.next())
-    // console.log(probablyIterator.next())
-    // console.log(probablyIterator.next())
-
-    let next
-    while (!(next = probablyIterator.next()).done) {
-      console.log(next.value)
-    }
-
-    // const iterable = {
-    //   *[Symbol.iterator]() {
-    //     yield 1;
-    //   },
-    // };
-    // for (const value of iterable) {
-    //   console.log(value);
-    // }
-    
-  }, [])
+  const cards = useSelector(selectAllCards)
+  // console.log(cards)
+  const cardItems = cards.map(card =>
+    <li key={card.id}>
+      {card.name}
+    </li>
+  );
 
   return (
     <div className="App">
@@ -55,6 +30,44 @@ function App() {
       <h2>{count}</h2>
       <button onClick={() => dispatch(increment())}>Increment</button>
       <button onClick={() => dispatch(decrement())}>Decrement</button>
+
+      <br/><br/>
+      <button onClick={() => {
+        dispatch(cardsAddOne({
+          id: ++cnt,
+          name: "card_" + cnt,
+          flag: false,
+        }))
+      }}>
+        AddOne
+      </button>
+
+      <button onClick={() => {
+        const card = cards.at(0)
+        if (card) {
+          const data = {
+            name: `[${card.name}]`,
+            flag: true,
+          }
+          dispatch(cardUpdate({ id: card.id, changes: data }))
+        }
+      }}>
+        Update
+      </button>
+
+      <button onClick={() => {
+        const card = cards.at(0)
+        if (card) {
+          dispatch(cardRemove(card.id))
+        }
+      }}>
+        Remove
+      </button>
+
+      {cardItems.length
+        ? <ul>{cardItems}</ul>
+        : <div>No cards!</div>
+      }
     </div>
   )
 }
